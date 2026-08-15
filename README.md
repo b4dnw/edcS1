@@ -47,7 +47,16 @@
 | Shockley Diode Equation | $I = I_S\left(e^{V/nV_T} - 1\right)$ | $I_S$: saturation current, $n$: ideality factor (1 or 2) | A |
 | Dynamic Resistance | $r_d = \dfrac{nV_T}{I_Q}$ | $I_Q$: quiescent forward current | Ω |
 
-### 2.3 Rectifiers & Filters
+### 2.3 Junction Capacitances
+
+| Formula Name | Equation | Variables | Units |
+|---|---|---|---|
+| Zero-Bias Depletion Cap. | $C_{j0} = A\sqrt{\dfrac{q\,\epsilon_{si}}{2V_0}\left(\dfrac{N_A N_D}{N_A + N_D}\right)}$ | $A$: cross-sectional area, $V_0$: built-in potential | F |
+| Depletion Cap. (Reverse) | $C_j = \dfrac{C_{j0}}{\left(1 + \dfrac{V_R}{V_0}\right)^m}$ | $V_R$: reverse bias magnitude, $m$: grading coefficient | F |
+| Minority Carrier Transit Time | $\tau_T = \dfrac{L_n^2}{2D_n} + \dfrac{L_p^2}{2D_p}$ | $L$: diffusion length, $D$: diffusion coefficient | s |
+| Diffusion Cap. (Forward) | $C_d = \left(\dfrac{\tau_T}{V_T}\right) I_Q$ | $\tau_T$: transit time, $I_Q$: quiescent forward current | F |
+
+### 2.4 Rectifiers & Filters
 
 | Formula Name | Equation | Variables | Units |
 |---|---|---|---|
@@ -96,7 +105,58 @@ $$V_0 = V_T \ln\!\left(\frac{N_D}{n_i^2 / N_A}\right)$$
 
 $$\boxed{V_0 = V_T \ln\!\left(\frac{N_A N_D}{n_i^2}\right)}$$
 
-### 3.2 Ripple Factor of a Full-Wave Rectifier
+### 3.2 The Ideal Diode Equation (Shockley Equation)
+
+**Assumptions**
+The ideal I–V relationship of a PN junction rests on four assumptions:
+1. Space-charge regions have abrupt boundaries, and the semiconductor is neutral outside this region.
+2. Maxwell–Boltzmann statistics apply to carrier populations.
+3. **Low-level injection** holds — majority carrier concentration does not change significantly.
+4. Total current ($I$) is constant throughout the entire PN structure.
+
+**Steps**
+
+1. At thermal equilibrium, relate the minority electron concentration on the p-side ($n_{p0}$) to the majority concentration on the n-side ($n_{n0}$) via the built-in potential ($V_{bi}$):
+
+$$n_{p0} = n_{n0} \exp\!\left(-\frac{qV_{bi}}{kT}\right)$$
+
+2. Under forward bias ($V_A$), the barrier voltage becomes $(V_{bi} - V_A)$, so the minority carrier concentration at the depletion-region edge becomes:
+
+$$n_p = n_{n0} \exp\!\left(-\frac{q(V_{bi} - V_A)}{kT}\right) = n_{p0} \exp\!\left(\frac{qV_A}{kT}\right)$$
+
+By the same argument, for holes injected into the n-region:
+
+$$p_n = p_{n0} \exp\!\left(\frac{qV_A}{kT}\right)$$
+
+3. Forward bias drives steady-state injection of excess carriers. The excess hole concentration ($\Delta p_n$) and excess electron concentration ($\Delta n_p$) are:
+
+$$\Delta p_n = p_n\left(\exp\!\left(\frac{qV_A}{kT}\right) - 1\right), \qquad \Delta n_p = n_p\left(\exp\!\left(\frac{qV_A}{kT}\right) - 1\right)$$
+
+4. The hole diffusion current at any point $x_n$ is proportional to the concentration gradient. Using the minority carrier diffusion length ($L_p$) and cross-sectional area ($A$):
+
+$$I_p(x_n) = -qAD_p \frac{d\Delta p(x_n)}{dx_n} = \frac{qAD_p \Delta p_n}{L_p}$$
+
+Evaluated at the boundary ($x_n = 0$):
+
+$$I_p(x_n=0) = \frac{qAD_p p_n}{L_p} \left(\exp\!\left(\frac{qV_A}{kT}\right) - 1\right)$$
+
+By the same argument for electrons at the p-side boundary ($x_p = 0$):
+
+$$I_n(x_p=0) = \frac{qAD_n n_p}{L_n} \left(\exp\!\left(\frac{qV_A}{kT}\right) - 1\right)$$
+
+5. Total diode current is the sum of both diffusion currents evaluated at the space-charge edges:
+
+$$I = I_p(x_n=0) + I_n(x_p=0) = qA \left( \frac{D_p p_n}{L_p} + \frac{D_n n_p}{L_n} \right) \left(\exp\!\left(\frac{qV_A}{kT}\right) - 1\right)$$
+
+6. Group the leading constant term as the Reverse Saturation Current ($I_0$):
+
+$$I_0 = qA \left( \frac{D_p p_n}{L_p} + \frac{D_n n_p}{L_n} \right)$$
+
+**Result**
+
+$$\boxed{I = I_0 \left(\exp\!\left(\frac{qV_A}{kT}\right) - 1\right)}$$
+
+### 3.3 Ripple Factor of a Full-Wave Rectifier
 
 **Assumptions**
 - Input is a pure sinusoid, $v(t) = V_m \sin(\omega t)$.
@@ -130,69 +190,60 @@ $$\boxed{\gamma \approx 0.482 \ \text{(48.2\%)}}$$
 
 ### Q: Explain energy band theory. How does it distinguish insulators, intrinsic semiconductors, and extrinsic semiconductors?
 
-**Formation of bands** — When isolated atoms form a crystal lattice, the Pauli Exclusion Principle forbids any two electrons from sharing the same quantum state. Overlapping atomic orbitals split into tightly spaced energy levels, forming continuous **bands**: the **Valence Band** (highest band, fully occupied at 0 K) and the **Conduction Band** (next band up, empty at 0 K), separated by the **Bandgap Energy ($E_g$)**.
+**Formation of bands** — Overlapping atomic orbitals in a crystal lattice split into tightly spaced energy levels forming continuous **bands**: the **Valence Band** (highest band, fully occupied at 0 K) and the **Conduction Band** (next band up, empty at 0 K), separated by the **Bandgap Energy ($E_g$)**.
 
-- **Insulators** — Very large bandgap ($E_g > 5$ eV). At room temperature, thermal energy ($kT \approx 0.0259$ eV) is far too small to excite electrons into the conduction band, so the valence band stays full and the conduction band stays empty — conductivity is essentially zero.
-- **Intrinsic Semiconductors** — Moderate bandgap (Si $\approx 1.12$ eV). At 0 K they behave as insulators; at room temperature thermal energy breaks some covalent bonds, exciting electrons into the conduction band and leaving holes in the valence band, with $n = p = n_i$.
+- **Insulators** — Very large bandgap ($E_g > 5$ eV). At room temperature, thermal energy ($kT$) is far too small to excite electrons into the conduction band, so conductivity is essentially zero.
+- **Intrinsic Semiconductors** — Moderate bandgap (Si $\approx 1.12$ eV). At 0 K they behave as insulators; at room temperature thermal energy breaks covalent bonds, exciting electrons into the conduction band and leaving holes behind, with $n = p = n_i$.
 - **Extrinsic Semiconductors** — Conductivity is boosted by intentional doping:
-  - **N-type**: doped with Group V atoms (e.g., phosphorus). The extra valence electron is loosely bound and sits at a donor level just below the conduction band, donating electrons easily — electrons are the majority carrier.
-  - **P-type**: doped with Group III atoms (e.g., boron). The missing bond electron creates an acceptor level just above the valence band, which readily accepts electrons and leaves holes — holes are the majority carrier.
+  - **N-type**: doped with Group V atoms (e.g., phosphorus). Introduces a donor level just below the conduction band — electrons are the majority carrier.
+  - **P-type**: doped with Group III atoms (e.g., boron). Creates an acceptor level just above the valence band — holes are the majority carrier.
 
 ### Q: Contrast drift and diffusion current. What drives each?
 
 **Drift Current**
 - **Mechanism**: directed carrier motion under an applied external electric field.
-- **Physics**: an electric field $E$ accelerates holes along the field and electrons against it; carriers repeatedly collide with the vibrating lattice, settling into a steady average drift velocity, $v_d = \mu E$.
-- **Depends on**: carrier concentration, applied field, and mobility ($\mu$).
+- **Physics**: holes accelerate along the field, electrons against it; constant collisions with the lattice yield a steady average drift velocity, $v_d = \mu E$.
 
 **Diffusion Current**
 - **Mechanism**: carrier motion driven by a concentration gradient, from high to low concentration.
-- **Physics**: driven by random thermal (Brownian) motion — no external field is needed. Carriers injected at one point spread out toward a uniform distribution.
-- **Depends on**: the spatial gradient of concentration ($dn/dx$ or $dp/dx$) and the diffusion coefficient $D$, which is set by thermal energy.
+- **Physics**: driven purely by random thermal motion — no external field is required.
 
 ### Q: Detail the physical mechanisms of Zener vs. Avalanche breakdown in a reverse-biased PN junction.
 
-**Zener Breakdown**
-- **Conditions**: heavily doped junctions → very narrow depletion region.
-- **Mechanism**: a thin depletion region means even a modest reverse bias (< 5 V) produces an intense field ($E = V/W$), strong enough to pull electrons directly out of covalent bonds via quantum tunneling from the p-side valence band into the n-side conduction band.
-- **Characteristic**: **negative** temperature coefficient — breakdown voltage falls as temperature rises.
+- **Zener Breakdown**: occurs in **heavily doped** junctions, giving a very narrow depletion region. A relatively low reverse bias (< 5 V) creates a field strong enough to rip electrons directly out of covalent bonds via tunneling from the valence band to the conduction band. Has a **negative** temperature coefficient.
+- **Avalanche Breakdown**: occurs in **lightly doped** junctions, giving a wider depletion region. Under higher reverse bias (> 5 V), minority carriers accelerate to high kinetic energies and collide with the lattice, breaking bonds and generating new electron-hole pairs (impact ionization) in a cascading effect. Has a **positive** temperature coefficient.
 
-**Avalanche Breakdown**
-- **Conditions**: lightly doped junctions → wide depletion region.
-- **Mechanism**: at higher reverse bias (> 5 V), minority carriers crossing the wide depletion region gain enough kinetic energy to collide with lattice atoms, breaking covalent bonds and generating new electron-hole pairs (impact ionization). These new carriers accelerate and collide further, cascading into a large reverse current.
-- **Characteristic**: **positive** temperature coefficient — breakdown voltage rises with temperature as increased lattice scattering shortens the carrier mean free path.
+### Q: A PN junction diode exhibits two distinct capacitances depending on bias. Identify both, explain their physical mechanisms, and state which bias condition each dominates under.
+
+- **Depletion (Junction) Capacitance, $C_j$** — dominant in **reverse bias**. The depletion region acts like the dielectric of a parallel-plate capacitor, sandwiched between the conductive p- and n-type neutral regions. Changing the reverse voltage changes the depletion width, uncovering more or fewer immobile dopant ions. Non-linear: $C_j$ decreases as reverse bias increases.
+- **Diffusion Capacitance, $C_d$** — dominant in **forward bias**. Injected excess minority carriers establish a steady-state stored-charge profile in the neutral regions; changing the forward voltage requires this profile to shift to a new equilibrium. $C_d$ is typically orders of magnitude larger than $C_j$.
 
 ### Q: Explain the operating principles of clamping and limiting (clipping) circuits.
 
-**Limiter (Clipper) Circuits**
-- **Function**: caps the input signal at a set positive or negative threshold.
-- **Operation**: built from resistors and diodes (often with a DC bias source). Once the input exceeds $V_{limit} = V_{bias} + 0.7$ V, the diode turns ON and clamps the output at that level; below threshold the diode is OFF and the signal passes through unchanged.
-
-**Clamper (DC Restorer) Circuits**
-- **Function**: shifts the entire AC waveform up or down by a fixed DC level without changing its peak-to-peak shape.
-- **Operation**: built from a capacitor, diode, and resistor. During the half-cycle that forward-biases the diode, the capacitor charges to the input peak; once charged, the diode turns OFF. Because the discharge time constant $RC$ is made much larger than the signal period, the capacitor behaves like a DC battery in series with the input, giving $v_{out} = v_{in} \pm V_c$.
+- **Limiter (Clipper)**: caps the input signal at a set threshold. Built from resistors and diodes; once the input exceeds the DC bias plus diode forward drop, the diode turns ON and clamps the output.
+- **Clamper (DC Restorer)**: shifts the entire AC waveform up or down by a fixed DC level without altering its shape. Built from a capacitor, diode, and resistor — the capacitor charges rapidly to the input peak and holds it (given a large $RC$), acting like a DC battery in series with the input.
 
 ---
 
 ## 5. Short Answer Q&A
 
 **Q: What is the Fermi Level?**
-A: The energy level at which the probability of finding an electron is exactly 50% at thermal equilibrium. In intrinsic semiconductors it lies near the middle of the bandgap.
+A: The energy level at which the probability of finding an electron is exactly 50% at thermal equilibrium.
 
 **Q: Define carrier mobility ($\mu$).**
-A: A measure of how easily a carrier (electron or hole) moves through a semiconductor under an electric field; it relates drift velocity to field via $v_d = \mu E$.
+A: A measure of how easily a carrier moves through a semiconductor under an electric field ($v_d = \mu E$).
 
 **Q: What is the depletion region?**
-A: The region near a PN junction depleted of mobile carriers due to diffusion and recombination, leaving behind fixed, charged impurity ions that create a built-in electric field.
+A: The region near a PN junction depleted of mobile charge carriers due to diffusion and recombination, leaving behind immobile charged impurity ions.
 
 **Q: What is thermal voltage ($V_T$)?**
-A: The voltage equivalent of a particle's thermal energy at a given temperature, $V_T = kT/q$. At room temperature (300 K) it is approximately 25.9 mV.
+A: The voltage equivalent of a particle's thermal energy, $V_T = kT/q$. At 300 K it is approximately 25.9 mV.
 
 **Q: What is the barrier (built-in) potential, $V_0$?**
-A: The potential difference across the depletion region at thermal equilibrium; it opposes further diffusion of majority carriers across the junction.
+A: The potential difference across the depletion region at thermal equilibrium, preventing further diffusion of majority carriers across the junction.
 
 **Q: Why does a capacitor filter reduce ripple in a rectifier circuit?**
-A: The capacitor charges to the peak of the rectified voltage, then discharges slowly through the load as the rectified wave dips below the peak. With a large $RC$ time constant, the output stays close to the peak, smoothing out the sharp drops of the rectified sine wave.
+A: The capacitor charges to the peak of the rectified voltage and discharges slowly through the load as the wave drops below the peak. With a large $RC$ time constant, the output stays close to the peak, smoothing the wave.
 
 ---
 
