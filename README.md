@@ -1,4 +1,4 @@
-# 📘 24EECE2001 — Master Reference README
+# 📘 EDC Sessional 1 — Master Reference README
 ### Units 1 & 2 | Semiconductors & Diodes
 
 > **How to use this file**
@@ -247,4 +247,4 @@ A: The capacitor charges to the peak of the rectified voltage and discharges slo
 
 ---
 
-*End of 24EECE2001 Master Reference README — Units 1 & 2, Complete*
+*End of EDC Master Reference README — Units 1 & 2, Complete*
